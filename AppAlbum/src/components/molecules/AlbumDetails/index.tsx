@@ -2,42 +2,57 @@ import styled from "@emotion/native";
 import React, { useEffect, useMemo } from "react";
 import { Button, FlatList, Image, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { useAlbums } from "../../../contexts/album-context";
+import { usePhotos } from "../../../contexts/photo-context";
+import IPhoto from "../../../models/IPhoto";
 import { IState } from "../../../models/IState";
 import { actualizarSelectedAlbum, fetchAlbums } from "../../../store/actions/Album";
 import { fetchPhotos } from "../../../store/actions/Photo";
+import PhotoListItem from "../PhotoListItem";
 
 const AlbumDetails: React.FC = () => {
-    const dispatch = useDispatch();
-    const selectedAlbum = useSelector((state: IState) => state.Albumns.selectedAlbum);
-    const albums = useSelector((state: IState) => state.Albumns.albums);
+    //const dispatch = useDispatch();
+    //const selectedAlbum = useSelector((state: IState) => state.Albumns.selectedAlbum);
+    //const albums = useSelector((state: IState) => state.Albumns.albums);
+    //const photos = useSelector((state: IState) => state.Photos.photos);
+
+    const { photos, fetchPhotos } = usePhotos();
+    const { albums, setSelectedAlbum, selectedAlbum } = useAlbums();
     const { userId, id, title } = albums[selectedAlbum || 0];
-    const photos = useSelector((state: IState) => state.Photos.photos);
-    const filteredPhotos = useMemo(
+    /*const filteredPhotos = useMemo(
         () => photos.filter(photo => photo.albumId === id),
         [photos, id],
-    );
+    );*/
+    const filteredPhotos = photos.filter(photo => photo.albumId === id);
 
     const onBackPress = () => {
-        dispatch(actualizarSelectedAlbum(null));
+        //dispatch(actualizarSelectedAlbum(null));
+        setSelectedAlbum(null);
     };
 
     useEffect(() => {
-        dispatch(fetchPhotos());
+        //dispatch(fetchPhotos());
+        fetchPhotos();
     }, []);
 
     return (
         <Container>
-            <CustomText>Usuario: {userId}</CustomText>
-            <CustomText>Id Album: {id}</CustomText>
-            <CustomText>Title Album: {title}</CustomText>
-
+            <CustomText>ID Usuario: {userId}</CustomText>
+            <CustomText>ID Album: {id}</CustomText>
+            <CustomText>Titulo: {title}</CustomText>
+            <CustomText>{"\n"}</CustomText>
             {filteredPhotos.length > 0 && (
-                <FlatList data={filteredPhotos} renderItem={({ item }) => <Image style={styles.image} source={{ uri: item.thumbnailUrl }} />} />
+                <PhotoList
+                    data={filteredPhotos}
+                    renderItem={({ item }) => <PhotoListItem photo={item as IPhoto} />}
+                />
             )}
             <Button title="Back" onPress={onBackPress} />
         </Container>
     );
 };
+
+export default AlbumDetails;
 
 const Container = styled.View`
     padding: 16px;
@@ -48,17 +63,6 @@ const CustomText = styled.Text`
     font-size: 18px;
   `;
 
-const TodoList = styled.FlatList`
+const PhotoList = styled.FlatList`
     padding: 8px;
   `;
-
-const styles = StyleSheet.create({
-    image: {
-        width: 70,
-        height: 70,
-        margin: 10,
-        marginLeft: 30,
-    },
-});
-
-export default AlbumDetails;

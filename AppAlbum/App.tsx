@@ -6,6 +6,9 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import HomeScreen from './src/components/screens/HomeScreen';
 import * as reducers from './src/store/reducers';
 import thunk from 'redux-thunk';
+import { AlbumProvider } from './src/contexts/album-context';
+import ListaAlbums from './src/components/organisms/ListaAlbums';
+import { PhotosProvider } from './src/contexts/photo-context';
 
 const store = createStore(
   combineReducers(reducers),
@@ -15,10 +18,14 @@ const store = createStore(
 const App = () => {
   return (
     <Provider store={store}>
-      <SafeAreaView>
-        <HomeScreen />
-      </SafeAreaView>
-
+      <AlbumProvider>
+        <PhotosProvider>
+          <SafeAreaView>
+            <HomeScreen />
+            {/*<ListaAlbums />*/}
+          </SafeAreaView>
+        </PhotosProvider>
+      </AlbumProvider>
     </Provider>
   );
 };
