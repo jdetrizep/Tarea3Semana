@@ -9,6 +9,10 @@ import thunk from 'redux-thunk';
 import { AlbumProvider } from './src/contexts/album-context';
 import ListaAlbums from './src/components/organisms/ListaAlbums';
 import { PhotosProvider } from './src/contexts/photo-context';
+import Home from './src/components/screens/Home';
+import BottomTabNav from './src/navigators/BottomTabNav';
+import { NavigationContainer } from '@react-navigation/native';
+import { PublicacionesProvider } from './src/contexts/publicaciones-context';
 
 const store = createStore(
   combineReducers(reducers),
@@ -18,14 +22,17 @@ const store = createStore(
 const App = () => {
   return (
     <Provider store={store}>
-      <AlbumProvider>
-        <PhotosProvider>
-          <SafeAreaView>
-            <HomeScreen />
+      <PublicacionesProvider>
+        <AlbumProvider>
+          <PhotosProvider>
+            {<NavigationContainer>
+              <BottomTabNav />
+            </NavigationContainer>}
+            {/*<HomeScreen />*/}
             {/*<ListaAlbums />*/}
-          </SafeAreaView>
-        </PhotosProvider>
-      </AlbumProvider>
+          </PhotosProvider>
+        </AlbumProvider>
+      </PublicacionesProvider>
     </Provider>
   );
 };
